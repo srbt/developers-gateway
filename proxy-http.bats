@@ -20,7 +20,7 @@ setup() {
   docker build -t "${IMAGE_BACKOFFICE}" backoffice
   docker build -t "${IMAGE_TOOLBOX}" toolbox
   docker build -t "${IMAGE_FORWARD_PROXY}" forward-proxy
-  docker build -t "${IMAGE_REVERSE_PROXY}" reverse-proxy
+  docker build --build-arg NODES_PROTOCOL=http -t "${IMAGE_REVERSE_PROXY}" reverse-proxy
   mkdir "${TEST_CONTEXT}/certs"
   docker run --rm -u "$(id -u):$(id -g)" -v "${PWD}/${TEST_CONTEXT}/certs:/certs" "${IMAGE_TOOLBOX}" /usr/local/bin/createCa.sh
   docker run -d --network "${TEST_NETWORK}" --hostname "backoffice.in.application.com" --name "${CON_BACKOFFICE}" "${IMAGE_BACKOFFICE}"
@@ -53,7 +53,6 @@ setup() {
 
 @test "Forward proxy and reverse proxy is working" {
   wait_for_container_log "${CON_FORWARD_PROXY}" "Accepting HTTP Socket connections"
-#  wait_for_container_log "${CON_FORWARD_PROXY}" "Accepting SSL bumped HTTP Socket connections"
   run docker ps
   assert_success
   assert_output --partial "${CON_FORWARD_PROXY}"
