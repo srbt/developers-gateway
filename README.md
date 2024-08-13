@@ -1,18 +1,20 @@
-## Use case: Docker network with containers for development of modularized application
+Here's a revised version of your text in American English:
+
+## Use Case: Docker Network with Containers for Modularized Application Development
 
 ### Problem Statement
-We have a modularized application consisting of multiple components (e.g., API, backoffice) that communicate with each other over HTTP or HTTPS.
+We have a modularized application composed of multiple components (e.g., API, back office) that communicate with each other via HTTP or HTTPS.
 
-From outer network, we want to access these components using production URLs over HTTPS.
+Externally, we want to access these components using production URLs over HTTPS.
 
-As developers, we need to create a development environment that closely mirrors the production setup to test our changes effectively. We also want to simplify the network configuration, enable easier debugging, and improve the development workflow.
+As developers, we need to create a development environment that closely mirrors the production setup to effectively test our changes. Additionally, we aim to simplify network configuration, facilitate easier debugging, and enhance our development workflow.
 
 ### Proposed Solution
-We propose using Docker to create a network of containers that simulate the production environment, along with forward and reverse proxies to manage traffic between the components. The setup includes the following components:
+We propose using Docker to create a network of containers that simulate the production environment, incorporating both forward and reverse proxies to manage traffic between the components. The setup includes the following elements:
 
-- examples of modules: API, backoffice
-- reverse proxy: handles incoming requests and routes them to the appropriate module
-- forward proxy: forwards requests from the browser to the reverse proxy
+- **Examples of modules:** API, back office
+- **Reverse proxy:** Handles incoming requests and routes them to the appropriate module
+- **Forward proxy:** Forwards requests from the browser to the reverse proxy
 
 ```mermaid
 graph TD;
@@ -33,12 +35,12 @@ graph TD;
     end
 
 ```
-Solution contains two variants of the setup - one with HTTP and one with HTTPS communication between the modules.
+The solution offers two setup variants: one with HTTP communication and another with HTTPS communication between the modules.
 
-## Developers access the application using the forward proxy
-Developers configure their browsers to use the forward proxy to access the application modules using production URLs. The forward proxy forwards the requests to the reverse proxy, which routes them to the appropriate module based on the URL path.
-Proxy configuration can be passed to the browser environment variables.
-Is recommended to use a separate profile for the browser to avoid conflicts with the default profile.
+### Developer Access to the Application via Forward Proxy
+Developers configure their browsers to use the forward proxy to access application modules using production URLs. The forward proxy forwards the requests to the reverse proxy, which then routes them to the appropriate module based on the URL path. Proxy configuration can be passed to the browser via environment variables.
+
+It is recommended to use a separate browser profile to avoid conflicts with the default profile.
 
 For example, in Linux:
 ```bash
@@ -48,12 +50,13 @@ https_proxy=http://${HOSTNAME}:3128 google-chrome --user-data-dir=/path/to/profi
 https_proxy=http://${HOSTNAME}:3128 curl https://api.in.application.com
 ```
 
-For best comfort is recomended to import Certificate Authority (CA) certificate generated for the reverse proxy to the browser's profile.
+For optimal convenience, it is recommended to import the Certificate Authority (CA) certificate generated for the reverse proxy into the browser's profile.
 
-If you are worried about confusion between production and development environments, you can use a slightly different domain name for the development environment, e.g., `backoffice.in.application.com` or differentiate test version by color or other visual cues. Color scheme can be modified in the browser's profile.
-For example, in Firefox you can set color for panels in css file as described in https://stackoverflow.com/questions/78206548/firefox-124-how-to-change-background-color-of-active-tab-in-userchrome-css or https://www.userchrome.org/.
+To avoid confusion between production and development environments, consider using a slightly different domain name for the development environment (e.g., `backoffice.in.application.com`) or differentiate the test version with color schemes or other visual cues. You can modify the color scheme within the browser's profile.
 
-For two or more docker network setups, you must use different ports for the forward proxy, but it is only one port to change in the configuration.
+For example, in Firefox, you can set a color for panels in a CSS file as described in [this Stack Overflow post](https://stackoverflow.com/questions/78206548/firefox-124-how-to-change-background-color-of-active-tab-in-userchrome-css) or at [userchrome.org](https://www.userchrome.org/).
+
+For two or more Docker network setups, you must use different ports for the forward proxy, but this involves changing only a single port in the configuration.
 
 ## ChatGpt opinion about the solution
 
