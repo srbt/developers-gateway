@@ -19,21 +19,20 @@ We propose using Docker to create a network of containers that simulate the prod
 ```mermaid
 graph TD;
     subgraph Outer Network
-        browser
-        FP[forward-proxy:3128]
-        browser -->|https-proxy| FP
+        browser 
     end
     
     subgraph Docker Network
+        FP[forward-proxy:3128]
         RP[reverse-proxy:443]
         API[api.in.application.com:8080]
         BO[backoffice.in.application.com:8080]
         
+        browser -->|https-proxy<br>via<br>exported port 3128| FP
         FP -->|https| RP
         RP -->|http| API
         RP -->|http| BO
     end
-
 ```
 The solution offers two setup variants: one with HTTP communication and another with HTTPS communication between the modules.
 
