@@ -26,8 +26,8 @@ graph TD;
     
     subgraph Docker Network
         RP[reverse-proxy:443]
-        API[api:8080]
-        BO[backoffice:8080]
+        API[api.in.application.com:8080]
+        BO[backoffice.in.application.com:8080]
         
         FP -->|https| RP
         RP -->|http| API
@@ -36,6 +36,12 @@ graph TD;
 
 ```
 The solution offers two setup variants: one with HTTP communication and another with HTTPS communication between the modules.
+
+#### Communication between components via HTTP
+Components communicate with each other over HTTP within the Docker network using urls with port number (e.g., `http://api.in.application.com:8080`).
+
+#### Communication between components via HTTPS
+Components communicate with each other over HTTPS within the Docker network using urls without port number (e.g., `https://api.in.application.com`), because communication is routed through the reverse proxy.
 
 ### Developer Access to the Application via Forward Proxy
 Developers configure their browsers to use the forward proxy to access application modules using production URLs. The forward proxy forwards the requests to the reverse proxy, which then routes them to the appropriate module based on the URL path. Proxy configuration can be passed to the browser via environment variables.
