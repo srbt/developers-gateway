@@ -1,3 +1,19 @@
+## Use case: Docker network with containers for development of modularized application
+
+### Problem Statement
+We have a modularized application consisting of multiple components (e.g., API, backoffice) that communicate with each other over HTTP or HTTPS.
+
+From outer network, we want to access these components using production URLs over HTTPS.
+
+As developers, we need to create a development environment that closely mirrors the production setup to test our changes effectively. We also want to simplify the network configuration, enable easier debugging, and improve the development workflow.
+
+### Proposed Solution
+We propose using Docker to create a network of containers that simulate the production environment, along with forward and reverse proxies to manage traffic between the components. The setup includes the following components:
+
+- examples of modules: API, backoffice
+- reverse proxy: handles incoming requests and routes them to the appropriate module
+- forward proxy: forwards requests from the browser to the reverse proxy
+
 ```mermaid
 graph TD;
     subgraph Outer Network
@@ -17,6 +33,30 @@ graph TD;
     end
 
 ```
+Solution contains two variants of the setup - one with HTTP and one with HTTPS communication between the modules.
+
+## Developers access the application using the forward proxy
+Developers configure their browsers to use the forward proxy to access the application modules using production URLs. The forward proxy forwards the requests to the reverse proxy, which routes them to the appropriate module based on the URL path.
+Proxy configuration can be passed to the browser environment variables.
+Is recommended to use a separate profile for the browser to avoid conflicts with the default profile.
+
+For example, in Linux:
+```bash
+mkdir -p /path/to/profile
+https_proxy=http://${HOSTNAME}:3128 firefox --profile /path/to/profile
+https_proxy=http://${HOSTNAME}:3128 google-chrome --user-data-dir=/path/to/profile
+https_proxy=http://${HOSTNAME}:3128 curl https://api.in.application.com
+```
+
+For best comfort is recomended to import Certificate Authority (CA) certificate generated for the reverse proxy to the browser's profile.
+
+If you are worried about confusion between production and development environments, you can use a slightly different domain name for the development environment, e.g., `backoffice.in.application.com` or differentiate test version by color or other visual cues. Color scheme can be modified in the browser's profile.
+For example, in Firefox you can set color for panels in css file as described in https://stackoverflow.com/questions/78206548/firefox-124-how-to-change-background-color-of-active-tab-in-userchrome-css or https://www.userchrome.org/.
+
+For two or more docker network setups, you must use different ports for the forward proxy, but it is only one port to change in the configuration.
+
+## ChatGpt opinion about the solution
+
 This configuration offers several benefits to developers by simulating a production-like environment, facilitating easier development, testing, and debugging processes. Here's a detailed description of the advantages:
 
 1. **Production-like Environment**:
